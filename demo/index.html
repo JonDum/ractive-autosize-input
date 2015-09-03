@@ -1,0 +1,204 @@
+
+<html>
+    <head>
+        <title>ractive-autosize-input Demo</title>
+
+        <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+
+        <!-- when yo ass has no interwebz -->
+        <!--<script src='../node_modules/ractive/ractive.js'></script>-->
+        
+        <style>
+
+            body {
+                background: #ebedf1;
+                font-family: 'Lucida Grande', 'Heveltica Nueue', 'Helvetica', 'sans-serif';
+                margin: 0;
+                padding: 3em;
+            }
+
+            demo {
+                display: block;
+                width: 100%;
+            }
+
+            input {
+                border: 1px solid #999;
+                padding: 1em;
+                outline: none;
+            }
+
+            div.dark {
+
+                background: #333;
+                padding: 2em;
+
+                margin: 1em 0;
+
+            }
+
+            input.dark {
+                background: #000;
+                color: #999;
+                border: 1px solid #555;
+                outline: none;
+            }
+
+            pre.events {
+                background-color: #fff;
+                height: 150px;
+                overflow: scroll;
+            }
+
+            input::-webkit-input-placeholder {
+              transition: opacity 0.3s ease;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+            }
+            input:-moz-placeholder {
+              transition: opacity 0.3s ease;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+            }
+            input:-ms-input-placeholder {
+              transition: opacity 0.3s ease;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+            }
+            input:focus::-webkit-input-placeholder {
+              opacity: 0.3;
+              -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+              filter: alpha(opacity=30);
+            }
+            input:focus::-moz-placeholder {
+              opacity: 0.3;
+              -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+              filter: alpha(opacity=30);
+            }
+            input:focus:-ms-input-placeholder {
+              opacity: 0.3;
+              -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+              filter: alpha(opacity=30);
+            }
+            
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <demo></demo>
+
+        <script src='../ractive-autosize-input.min.js'></script>
+
+        <script id='template' type='text/ractive'>
+
+            <h1>ractive-autosize-input demo</h1>
+
+            <section>
+                <h2>Basic</h2>
+                <autosize-input value='Hello!'/>
+            </section>
+
+            <section>
+                <h2>Two Way Binding</h2>
+
+                <autosize-input placeholder='Secret phrase' value='{{.phrase}}'/>
+
+                <span>The secret phrase is: {{.phrase}}</span>
+
+            </section>
+
+            <section>
+                <h2>Placeholders</h2>
+                <autosize-input placeholder='Hello!'/>
+            </section>
+
+            <section class='styles'>
+                <h2>Easily Stylable</h2>
+
+                <autosize-input value='Blue border' style='border-color: blue'/>
+
+                <div class='dark'>
+                    <autosize-input placeholder='Classes on the component get added to the input element' class='dark'/>
+                </div>
+
+                <autosize-input style='letter-spacing: 10px; font-size: 2em; font-family: Georgia' placeholder='font, size, spacing, no problem!'/>
+
+            </section>
+
+            <section>
+                <h2>Events</h2>
+                <autosize-input placeholder='Type into me'
+                    on-keydown='test'
+                    on-keypress='test'
+                    on-keyup='test'
+                    on-input='test'
+                    on-focus='test'
+                    on-blur='test'
+                    />
+                <pre class='events'>{{events.join('\n')}}</pre>
+            </section>
+
+
+        </script>
+
+        <script>
+
+            var main = new Ractive({
+
+                el: 'demo',
+
+                template: '#template',
+
+                data: {
+                    phrase: 'Open Sesame!',
+                    a: {},
+                    events: [],
+                },
+
+                computed: {
+                    b: function() {
+                        return [{}]
+                    },
+                },
+
+                oninit:function() {
+                    this.on('test', this.test.bind(this));
+                },
+
+                test: function(e) {
+                    if(e.type === undefined) {
+                        // ractive does weird stuff with on-change, passes an object like {value: '...'} instead of the event
+                        console.log('change');
+                        return;
+                    }
+                    console.log('test: ', e.type, arguments);
+
+                    var events = this.get('events');
+
+                    events.push(e.type);
+
+                    if(events.length > 10)
+                        events.shift();
+
+                    this.set('events', events);
+
+                    var pre = this.find('pre.events');
+                    if(pre)
+                        pre.scroll(0, pre.scrollHeight);
+                },
+
+                components: {
+                    'autosize-input':  RactiveAutosizeInput // don't do globals
+                    //tooltip: require('ractive-tooltip') // use a buildsystem
+                },
+
+            })
+        
+        </script>
+    
+    </body>
+
+</html>

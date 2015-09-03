@@ -1,0 +1,30 @@
+{
+  "name": "ractive-autosize-input",
+  "version": "0.1.0",
+  "description": "Input component that sizes itself to the size of the text for ractivejs",
+  "main": "src/autosize-input.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jondum/ractive-autosize-input"
+  },
+  "keywords": [
+    "ractivejs",
+    "ractive",
+    "component",
+    "input",
+    "autosize"
+  ],
+  "author": "Jonathan Dumaine",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jondum/ractive-autosize-input/issues"
+  },
+  "homepage": "https://github.com/jondum/ractive-autosize-input",
+  "devDependencies": {
+    "ractive-loader": "^0.5.6",
+    "webpack": "^1.8.5"
+  }
+}
