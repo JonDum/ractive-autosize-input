@@ -1,6 +1,6 @@
 {
   "name": "ractive-autosize-input",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Input component that sizes itself to the size of the text for ractivejs",
   "main": "src/autosize-input.js",
   "scripts": {
