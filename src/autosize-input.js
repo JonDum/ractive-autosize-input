@@ -7,13 +7,24 @@ var win = window, doc = win.document;
  *  and then uses an observer inside a lifecycle hook...
  *  sooo yea until I can wrap my head around that bullshit
  *  you need to have Ractive as a global
- *  
+ *
  */
 //var Ractive = require('ractive');
 
-// Share a single sizing element for all of the 
+// Share a single sizing element for all of the
 // instances on the page
-var sizer; 
+var sizer
+
+var throttle = require('lodash/throttle');
+
+var styles = [
+    'fontSize',
+    'fontFamily',
+    'fontWeight',
+    'letterSpacing',
+    'padding',
+    'border',
+];
 
 var RactiveAutosizeInput = Ractive.extend({
 
@@ -23,47 +34,107 @@ var RactiveAutosizeInput = Ractive.extend({
 
         var self = this;
 
-        if(!sizer) {
+        var input = self.find('input');
 
+        if(!sizer) {
             sizer = doc.createElement('span');
-            sizer.style.display = 'inline-block!important'; 
+            sizer.style.display = 'inline-block!important';
             sizer.style.position = 'fixed';
             sizer.style.left = sizer.style.top = '-9999px';
             sizer.className = 'ractive-autosize-input-sizer';
             doc.body.appendChild(sizer);
-
         }
 
-        self.observe('placeholder value', function() {
+        var oldStyles = window.getComputedStyle(input);
+        self.resizeHandler = throttle(function(event) {
 
-            var value = self.get('value');
-            var input = self.find('input');
-            var inputStyle = win.getComputedStyle(input);
+            var newStyles = window.getComputedStyle(input);
+            var dirty;
 
-            sizer.style.fontSize = inputStyle.fontSize;
-            sizer.style.fontFamily = inputStyle.fontFamily;
-            sizer.style.fontWeight = inputStyle.fontWeight;
-            sizer.style.letterSpacing = inputStyle.letterSpacing;
-            sizer.style.padding = inputStyle.padding;
-            sizer.style.border = inputStyle.border;
+            for(var i = 0; i < styles.length; i++) {
+                var style = styles[i];
+                if(newStyles[style] !== oldStyles[style]) {
+                    dirty = true;
+                }
+                // copy over style now that we've checked, cloning whole object doesn't work 
+                //oldStyles.setProperty(style, newStyles[style]);
+            }
 
-            var placeholder = self.get('placeholder');
+            oldStyles= clone(newStyles);
 
-            sizer.textContent = placeholder;
-            var sizeWithPlaceHolder = sizer.offsetWidth;
+            if(dirty)
+                self.updateSize();
 
-            sizer.textContent = value;
-            var sizeWithValue = sizer.offsetWidth;
 
-            input.style.width = Math.max(sizeWithPlaceHolder, sizeWithValue)+'px';
 
-        });
+        }, 60);
+
+        window.addEventListener('resize', self.resizeHandler);
+
+        if(MutationObserver) {
+
+            var observer = self.observer = new MutationObserver(function(mutations) {
+                self.updateSize();
+            });
+
+            observer.observe(input, {
+                attributes: true,
+                attributeFilter: ['style', 'class', 'id']
+            });
+        }
+
+        self.observe('placeholder value', self.updateSize);
     },
+
+    updateSize: function() {
+
+        var self = this;
+
+        var value = self.get('value');
+        var input = self.find('input');
+        var inputStyle = win.getComputedStyle(input);
+
+        styles.forEach(function(style) {
+            sizer.style[style] = inputStyle[style];
+        });
+
+        var placeholder = self.get('placeholder');
+
+        sizer.textContent = placeholder;
+        var sizeWithPlaceHolder = sizer.offsetWidth;
+
+        sizer.textContent = value;
+        var sizeWithValue = sizer.offsetWidth;
+
+        input.style.width = Math.max(sizeWithPlaceHolder, sizeWithValue)+'px';
+
+    },
+
+    onteardown: function() {
+        self.observer.disconnect();
+        window.removeEventListener('resize', self.resizeListener);
+    },
+
     forward: function(details) {
         var event = details.original;
         if(event && event.type)
             this.fire(event.type, event);
     }
 });
+
+// CSSStyleDeclarations get passed by reference, so we have to do this
+// bs to make a copy (of only the styles we care about)
+function clone(styleDec) {
+    var clone = {};
+
+    if(!styleDec || !styleDec.cssText)
+        return;
+
+    styles.forEach(function(style) {
+        clone[style] = styleDec[style];
+    });
+
+    return clone;
+}
 
 module.exports = RactiveAutosizeInput;
