@@ -114,7 +114,7 @@ var RactiveAutosizeInput = Ractive.extend({
     },
 
     onteardown: function() {
-        if(self.obserserver)
+        if(self.observer)
             self.observer.disconnect();
         window.removeEventListener('resize', self.resizeListener);
     },
