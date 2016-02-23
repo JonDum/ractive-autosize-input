@@ -91,22 +91,25 @@ var RactiveAutosizeInput = Ractive.extend({
         var self = this;
 
         var value = self.get('value');
+        var placeholder = self.get('placeholder');
         var input = self.find('input');
+
         var inputStyle = win.getComputedStyle(input);
 
         styles.forEach(function(style) {
             sizer.style[style] = inputStyle[style];
         });
 
-        var placeholder = self.get('placeholder');
 
-        sizer.textContent = placeholder;
-        var sizeWithPlaceHolder = sizer.offsetWidth;
+        if(placeholder.length > 0 && value.length == 0) {
+            sizer.textContent = placeholder;
+            var sizeWithPlaceHolder = sizer.offsetWidth;
+        }
 
         sizer.textContent = value;
         var sizeWithValue = sizer.offsetWidth;
 
-        input.style.width = Math.max(sizeWithPlaceHolder, sizeWithValue)+'px';
+        input.style.width = Math.max(sizeWithPlaceHolder || 0, sizeWithValue || 0)+'px';
 
     },
 
