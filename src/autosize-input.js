@@ -65,8 +65,6 @@ var RactiveAutosizeInput = Ractive.extend({
             if(dirty)
                 self.updateSize();
 
-
-
         }, 60);
 
         window.addEventListener('resize', self.resizeHandler);
@@ -100,7 +98,6 @@ var RactiveAutosizeInput = Ractive.extend({
             sizer.style[style] = inputStyle[style];
         });
 
-
         if(placeholder.length > 0 && value.length == 0) {
             sizer.textContent = placeholder;
             var sizeWithPlaceHolder = sizer.offsetWidth;
@@ -109,7 +106,10 @@ var RactiveAutosizeInput = Ractive.extend({
         sizer.textContent = value;
         var sizeWithValue = sizer.offsetWidth;
 
-        input.style.width = Math.max(sizeWithPlaceHolder || 0, sizeWithValue || 0)+'px';
+        var newWidth = Math.max(sizeWithPlaceHolder || 0, sizeWithValue || 0)+'px'
+
+        if(inputStyle.width !== newWidth)
+            input.style.width = newWidth;
 
     },
 
