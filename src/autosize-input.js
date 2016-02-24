@@ -98,7 +98,7 @@ var RactiveAutosizeInput = Ractive.extend({
             sizer.style[style] = inputStyle[style];
         });
 
-        if(placeholder.length > 0 && value.length == 0) {
+        if(placeholder && placeholder.length > 0 && value.length == 0) {
             sizer.textContent = placeholder;
             var sizeWithPlaceHolder = sizer.offsetWidth;
         }
