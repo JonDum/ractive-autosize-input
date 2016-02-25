@@ -16,6 +16,7 @@ var win = window, doc = win.document;
 var sizer
 
 var throttle = require('lodash/throttle');
+var isUndefined = require('lodash/isUndefined');
 
 var styles = [
     'fontSize',
@@ -98,7 +99,7 @@ var RactiveAutosizeInput = Ractive.extend({
             sizer.style[style] = inputStyle[style];
         });
 
-        if(placeholder && placeholder.length > 0 && value.length == 0) {
+        if(placeholder && placeholder.length > 0 && !isUndefined(value) && value.length == 0) {
             sizer.textContent = placeholder;
             var sizeWithPlaceHolder = sizer.offsetWidth;
         }
