@@ -9,25 +9,17 @@ module.exports = {
     },
     output: {
         path: __dirname + '/',
-        filename: 'ractive-autosize-input.min.js',
+        filename: 'ractive-autosize-input.js',
         library: 'RactiveAutosizeInput',
         libraryTarget: 'umd'
     },
 
     resolve: {
         root: process.cwd(),
-        modulesDirectories: ['node_modules', 'bower_components', 'css', 'js', 'templates'],
+        modulesDirectories: ['node_modules', 'css', 'js', 'templates'],
         extensions: ['', '.js', '.styl', '.html'],
     },
 
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
-    ],
-    
     module: {
         loaders: [
             {test: /\.styl$/, loader:'style-loader!css-loader!stylus-loader'},
