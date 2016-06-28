@@ -28,7 +28,7 @@ var styles = [
 
 var RactiveAutosizeInput = Ractive.extend({
 
-    template: require('./template'),
+    template: require('!ractive!./template'),
 
     onrender: function() {
 
