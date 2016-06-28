@@ -47,7 +47,6 @@ var RactiveAutosizeInput = Ractive.extend({
         _value: {
             get: function() {
                 var value = this.get('value');
-                console.log('value = ', value);
                 return value && value.replace ? value.replace(/\\n/g, '\n') : value;
             },
             set: function(value) {
