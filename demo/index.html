@@ -3,7 +3,7 @@
     <head>
         <title>ractive-autosize-input Demo</title>
 
-        <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+        <script src='http://cdn.ractivejs.org/latest/ractive.js'></script>
 
         <!-- when yo ass has no interwebz -->
         <!--<script src='../node_modules/ractive/ractive.js'></script>-->
@@ -98,19 +98,29 @@
 
         <demo></demo>
 
-        <script src='../ractive-autosize-input.min.js'></script>
+        <script src='../ractive-autosize-input.js'></script>
 
         <script id='template' type='text/ractive'>
 
             <h1>ractive-autosize-input demo</h1>
 
             <section>
-                <h2>Basic</h2>
+                <h2>Basic Usage</h2>
+
+                <code><pre>
+&lt;autosize-input value='Hello!'/&gt;
+                </pre></code>
+
                 <autosize-input value='Hello!'/>
             </section>
 
             <section>
                 <h2>Two Way Binding</h2>
+
+                <code><pre>
+&lt;autosize-input placeholder='Secret phrase' value='{{.phrase}}'/&gt;
+&lt;span&gt;The secret phrase is: {{.phrase}}&lt;/span&gt;
+                </pre></code>
 
                 <autosize-input placeholder='Secret phrase' value='{{.phrase}}'/>
 
@@ -120,6 +130,9 @@
 
             <section>
                 <h2>Placeholders</h2>
+                <code><pre>
+&lt;autosize-input placeholder='Hello!'/&gt;
+                </pre></code>
                 <autosize-input placeholder='Hello!'/>
             </section>
 
@@ -136,8 +149,32 @@
 
             </section>
 
+            <section class='multiline'>
+
+                <h2>Supports Multiline</h2>
+                <p>Automatically switches to a textarea if new lines are detected. To prevent this, set <code>multiline</code> to <code>false</code></p>
+
+                <autosize-input value='Dear Bob,\n\nYour burgers are great.\n\nSincerely,\n\nTed'/>
+
+
+            </section>
+
+
             <section>
                 <h2>Events</h2>
+                <p>Supports most events like a normal <code>&lt;input&gt;</code> element in ractive </p>
+
+                <code><pre>
+&lt;autosize-input placeholder='Type into me'
+    on-keydown='test'
+    on-keypress='test'
+    on-keyup='test'
+    on-input='test'
+    on-focus='test'
+    on-blur='test'
+    /&gt;
+                </pre></code>
+
                 <autosize-input placeholder='Type into me'
                     on-keydown='test'
                     on-keypress='test'
