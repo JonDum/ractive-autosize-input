@@ -86,7 +86,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var RactiveAutosizeInput = Ractive.extend({
 
-	    template: __webpack_require__(8),
+	    template: __webpack_require__(7),
 
 	    computed: {
 	        isMultiline: function() {
@@ -103,7 +103,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _value: {
 	            get: function() {
 	                var value = this.get('value');
-	                console.log('value = ', value);
 	                return value && value.replace ? value.replace(/\\n/g, '\n') : value;
 	            },
 	            set: function(value) {
@@ -668,11 +667,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */,
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "\n{{#if isMultiline}}\n\n<textarea class='ractive-autosize-input {{.class}}'\n          type='{{.type}}'\n          placeholder='{{.placeholder}}'\n          value='{{._value}}'\n          name='{{.name}}'\n          minlength='{{.minlength}}'\n          maxlength='{{.maxlength}}'\n          required='{{.required}}'\n          readonly='{{.readonly}}'\n          disabled='{{.disabled}}'\n          autofocus='{{.autofocus}}'\n          on-keydown='forward(event)'\n          on-keypress='forward(event)'\n          on-keyup='forward(event)'\n          on-input='forward(event)'\n          on-focus='forward(event)'\n          on-blur='forward(event)'\n          style='{{.style}}'/>\n\n{{else}}\n\n<input class='ractive-autosize-input {{.class}}'\n       type='{{.type}}'\n       placeholder='{{.placeholder}}'\n       value='{{._value}}'\n       name='{{.name}}'\n       minlength='{{.minlength}}'\n       maxlength='{{.maxlength}}'\n       required='{{.required}}'\n       readonly='{{.readonly}}'\n       disabled='{{.disabled}}'\n       autofocus='{{.autofocus}}'\n       on-keydown='forward(event)'\n       on-keypress='forward(event)'\n       on-keyup='forward(event)'\n       on-input='forward(event)'\n       on-focus='forward(event)'\n       on-blur='forward(event)'\n       style='{{.style}}'/>\n\n{{/if}}\n"
+	module.exports={"v":3,"t":[{"t":4,"f":[{"t":7,"e":"textarea","a":{"class":["ractive-autosize-input ",{"t":2,"r":".class"}],"type":[{"t":2,"r":".type"}],"placeholder":[{"t":2,"r":".placeholder"}],"value":[{"t":2,"r":"._value"}],"name":[{"t":2,"r":".name"}],"minlength":[{"t":2,"r":".minlength"}],"maxlength":[{"t":2,"r":".maxlength"}],"required":[{"t":2,"r":".required"}],"readonly":[{"t":2,"r":".readonly"}],"disabled":[{"t":2,"r":".disabled"}],"autofocus":[{"t":2,"r":".autofocus"}],"style":[{"t":2,"r":".style"}]},"v":{"keydown":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keypress":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keyup":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"input":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"focus":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"blur":{"m":"forward","a":{"r":["event"],"s":"[_0]"}}}}],"n":50,"r":"isMultiline"},{"t":4,"n":51,"f":[{"t":7,"e":"input","a":{"class":["ractive-autosize-input ",{"t":2,"r":".class"}],"type":[{"t":2,"r":".type"}],"placeholder":[{"t":2,"r":".placeholder"}],"value":[{"t":2,"r":"._value"}],"name":[{"t":2,"r":".name"}],"minlength":[{"t":2,"r":".minlength"}],"maxlength":[{"t":2,"r":".maxlength"}],"required":[{"t":2,"r":".required"}],"readonly":[{"t":2,"r":".readonly"}],"disabled":[{"t":2,"r":".disabled"}],"autofocus":[{"t":2,"r":".autofocus"}],"style":[{"t":2,"r":".style"}]},"v":{"keydown":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keypress":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keyup":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"input":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"focus":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"blur":{"m":"forward","a":{"r":["event"],"s":"[_0]"}}}}],"r":"isMultiline"}]};
 
 /***/ }
 /******/ ])
