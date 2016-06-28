@@ -16,7 +16,6 @@ var win = window, doc = win.document;
 var sizer
 
 var throttle = require('lodash/throttle');
-var isUndefined = require('lodash/isUndefined');
 
 var styles = [
     'fontSize',
