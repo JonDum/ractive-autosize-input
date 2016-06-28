@@ -1,8 +1,31 @@
 
+{{#if isMultiline}}
+
+<textarea class='ractive-autosize-input {{.class}}'
+          type='{{.type}}'
+          placeholder='{{.placeholder}}'
+          value='{{._value}}'
+          name='{{.name}}'
+          minlength='{{.minlength}}'
+          maxlength='{{.maxlength}}'
+          required='{{.required}}'
+          readonly='{{.readonly}}'
+          disabled='{{.disabled}}'
+          autofocus='{{.autofocus}}'
+          on-keydown='forward(event)'
+          on-keypress='forward(event)'
+          on-keyup='forward(event)'
+          on-input='forward(event)'
+          on-focus='forward(event)'
+          on-blur='forward(event)'
+          style='{{.style}}'/>
+
+{{else}}
+
 <input class='ractive-autosize-input {{.class}}'
        type='{{.type}}'
        placeholder='{{.placeholder}}'
-       value='{{.value}}'
+       value='{{._value}}'
        name='{{.name}}'
        minlength='{{.minlength}}'
        maxlength='{{.maxlength}}'
@@ -17,3 +40,5 @@
        on-focus='forward(event)'
        on-blur='forward(event)'
        style='{{.style}}'/>
+
+{{/if}}

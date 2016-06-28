@@ -13,7 +13,7 @@ var win = window, doc = win.document;
 
 // Share a single sizing element for all of the
 // instances on the page
-var sizer
+var sizer;
 
 var throttle = require('lodash/throttle');
 
@@ -26,29 +26,57 @@ var styles = [
     'border',
 ];
 
+//
+
 var RactiveAutosizeInput = Ractive.extend({
 
     template: require('!ractive!./template'),
+
+    computed: {
+        isMultiline: function() {
+
+            var multiline = this.get('multiline');
+
+            // test if multiline is explicitly defined
+            if(multiline === false || multiline === true)
+                return multiline;
+
+            // if not, automatically check for newline chars
+            return /\n/.test(this.get('_value'));
+        }, 
+        _value: {
+            get: function() {
+                var value = this.get('value');
+                console.log('value = ', value);
+                return value && value.replace ? value.replace(/\\n/g, '\n') : value;
+            },
+            set: function(value) {
+                this.set('value', value);
+            }
+        }
+    },
 
     onrender: function() {
 
         var self = this;
 
-        var input = self.find('input');
+        var el = self.find('*');
 
         if(!sizer) {
-            sizer = doc.createElement('span');
+            sizer = doc.createElement('div');
             sizer.style.display = 'inline-block!important';
             sizer.style.position = 'fixed';
+            sizer.style.speak = 'none';
+            sizer.style.whiteSpace = 'pre';
             sizer.style.left = sizer.style.top = '-9999px';
             sizer.className = 'ractive-autosize-input-sizer';
             doc.body.appendChild(sizer);
         }
 
-        var oldStyles = window.getComputedStyle(input);
+        var oldStyles = window.getComputedStyle(el);
         self.resizeHandler = throttle(function(event) {
 
-            var newStyles = window.getComputedStyle(input);
+            var newStyles = window.getComputedStyle(el);
             var dirty;
 
             for(var i = 0; i < styles.length; i++) {
@@ -75,7 +103,7 @@ var RactiveAutosizeInput = Ractive.extend({
                 self.updateSize();
             });
 
-            observer.observe(input, {
+            observer.observe(el, {
                 attributes: true,
                 attributeFilter: ['style', 'class', 'id']
             });
@@ -88,28 +116,42 @@ var RactiveAutosizeInput = Ractive.extend({
 
         var self = this;
 
-        var value = self.get('value');
+        var value = self.get('_value');
         var placeholder = self.get('placeholder');
-        var input = self.find('input');
+        var el = self.find('*');
 
-        var inputStyle = win.getComputedStyle(input);
+        var inputStyle = win.getComputedStyle(el);
 
         styles.forEach(function(style) {
             sizer.style[style] = inputStyle[style];
         });
 
-        if(placeholder && placeholder.length > 0 && !isUndefined(value) && value.length == 0) {
+        if(placeholder && placeholder.length > 0) {
             sizer.textContent = placeholder;
-            var sizeWithPlaceHolder = sizer.offsetWidth;
+            var widthWithPlaceholder = sizer.offsetWidth;
+            var heightWithPlaceholder = sizer.offsetHeight;
         }
 
         sizer.textContent = value;
-        var sizeWithValue = sizer.offsetWidth;
+        var widthWithValue = sizer.offsetWidth;
 
-        var newWidth = Math.max(sizeWithPlaceHolder || 0, sizeWithValue || 0)+'px'
+        var newWidth = Math.max(widthWithPlaceholder || 0, widthWithValue || 0)+'px';
 
-        if(inputStyle.width !== newWidth)
-            input.style.width = newWidth;
+        if(inputStyle.minWidth !== newWidth)
+            el.style.minWidth = newWidth;
+
+        // do the same operations above but for height
+        // if we're in multiline mode
+        if(self.get('isMultiline')) {
+
+            var heightWithValue = sizer.offsetHeight;
+            var newHeight = Math.max(heightWithPlaceholder || 0, heightWithValue|| 0)+'px'
+
+            if(inputStyle.minHeight !== newHeight)
+                el.style.minHeight = newHeight;
+
+        }
+
 
     },
 
