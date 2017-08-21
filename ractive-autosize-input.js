@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("Ractive"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["Ractive"], factory);
 	else if(typeof exports === 'object')
-		exports["RactiveAutosizeInput"] = factory();
+		exports["RactiveAutosizeInput"] = factory(require("Ractive"));
 	else
-		root["RactiveAutosizeInput"] = factory();
-})(this, function() {
+		root["RactiveAutosizeInput"] = factory(root["Ractive"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -52,26 +52,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	
 	var win = window, doc = win.document;
 
-	/*
-	 *  There's some super weird fucking bug when
-	 *  a component requires Ractive from a node_module
-	 *  and then uses an observer inside a lifecycle hook...
-	 *  sooo yea until I can wrap my head around that bullshit
-	 *  you need to have Ractive as a global
-	 *
-	 */
-	//var Ractive = require('ractive');
+	var Ractive = __webpack_require__(1);
 
 	// Share a single sizing element for all of the
 	// instances on the page
 	var sizer;
 
-	var throttle = __webpack_require__(1);
+	var throttle = __webpack_require__(2);
 
 	var styles = [
 	    'fontSize',
@@ -86,7 +78,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var RactiveAutosizeInput = Ractive.extend({
 
-	    template: __webpack_require__(7),
+	    template: __webpack_require__(15),
 
 	    computed: {
 	        isMultiline: function() {
@@ -99,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            // if not, automatically check for newline chars
 	            return /\n/.test(this.get('_value'));
-	        }, 
+	        },
 	        _value: {
 	            get: function() {
 	                var value = this.get('value');
@@ -139,7 +131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if(newStyles[style] !== oldStyles[style]) {
 	                    dirty = true;
 	                }
-	                // copy over style now that we've checked, cloning whole object doesn't work 
+	                // copy over style now that we've checked, cloning whole object doesn't work
 	                //oldStyles.setProperty(style, newStyles[style]);
 	            }
 
@@ -216,8 +208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        window.removeEventListener('resize', self.resizeListener);
 	    },
 
-	    forward: function(details) {
-	        var event = details.original;
+	    forward: function(event, context) {
 	        if(event && event.type)
 	            this.fire(event.type, event);
 	    }
@@ -241,43 +232,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RactiveAutosizeInput;
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-	var debounce = __webpack_require__(2),
-	    isObject = __webpack_require__(3);
+	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-	/** Used as the `TypeError` message for "Functions" methods. */
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var debounce = __webpack_require__(3),
+	    isObject = __webpack_require__(4);
+
+	/** Error message constants. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
 
 	/**
 	 * Creates a throttled function that only invokes `func` at most once per
 	 * every `wait` milliseconds. The throttled function comes with a `cancel`
 	 * method to cancel delayed `func` invocations and a `flush` method to
-	 * immediately invoke them. Provide an options object to indicate whether
-	 * `func` should be invoked on the leading and/or trailing edge of the `wait`
+	 * immediately invoke them. Provide `options` to indicate whether `func`
+	 * should be invoked on the leading and/or trailing edge of the `wait`
 	 * timeout. The `func` is invoked with the last arguments provided to the
 	 * throttled function. Subsequent calls to the throttled function return the
 	 * result of the last `func` invocation.
 	 *
-	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-	 * on the trailing edge of the timeout only if the throttled function is
-	 * invoked more than once during the `wait` timeout.
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the throttled function
+	 * is invoked more than once during the `wait` timeout.
 	 *
-	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
 	 * for details over the differences between `_.throttle` and `_.debounce`.
 	 *
 	 * @static
 	 * @memberOf _
+	 * @since 0.1.0
 	 * @category Function
 	 * @param {Function} func The function to throttle.
 	 * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
-	 * @param {Object} [options] The options object.
-	 * @param {boolean} [options.leading=true] Specify invoking on the leading
-	 *  edge of the timeout.
-	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
-	 *  edge of the timeout.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=true]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
 	 * @returns {Function} Returns the new throttled function.
 	 * @example
 	 *
@@ -312,49 +313,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = throttle;
 
 
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(3),
-	    now = __webpack_require__(4),
-	    toNumber = __webpack_require__(5);
+	var isObject = __webpack_require__(4),
+	    now = __webpack_require__(5),
+	    toNumber = __webpack_require__(8);
 
-	/** Used as the `TypeError` message for "Functions" methods. */
+	/** Error message constants. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
+	var nativeMax = Math.max,
+	    nativeMin = Math.min;
 
 	/**
 	 * Creates a debounced function that delays invoking `func` until after `wait`
 	 * milliseconds have elapsed since the last time the debounced function was
 	 * invoked. The debounced function comes with a `cancel` method to cancel
 	 * delayed `func` invocations and a `flush` method to immediately invoke them.
-	 * Provide an options object to indicate whether `func` should be invoked on
-	 * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
-	 * with the last arguments provided to the debounced function. Subsequent calls
-	 * to the debounced function return the result of the last `func` invocation.
+	 * Provide `options` to indicate whether `func` should be invoked on the
+	 * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+	 * with the last arguments provided to the debounced function. Subsequent
+	 * calls to the debounced function return the result of the last `func`
+	 * invocation.
 	 *
-	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-	 * on the trailing edge of the timeout only if the debounced function is
-	 * invoked more than once during the `wait` timeout.
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the debounced function
+	 * is invoked more than once during the `wait` timeout.
 	 *
-	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
 	 * for details over the differences between `_.debounce` and `_.throttle`.
 	 *
 	 * @static
 	 * @memberOf _
+	 * @since 0.1.0
 	 * @category Function
 	 * @param {Function} func The function to debounce.
 	 * @param {number} [wait=0] The number of milliseconds to delay.
-	 * @param {Object} [options] The options object.
-	 * @param {boolean} [options.leading=false] Specify invoking on the leading
-	 *  edge of the timeout.
-	 * @param {number} [options.maxWait] The maximum time `func` is allowed to be
-	 *  delayed before it's invoked.
-	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
-	 *  edge of the timeout.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=false]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {number} [options.maxWait]
+	 *  The maximum time `func` is allowed to be delayed before it's invoked.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
 	 * @returns {Function} Returns the new debounced function.
 	 * @example
 	 *
@@ -376,16 +383,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * jQuery(window).on('popstate', debounced.cancel);
 	 */
 	function debounce(func, wait, options) {
-	  var args,
-	      maxTimeoutId,
+	  var lastArgs,
+	      lastThis,
+	      maxWait,
 	      result,
-	      stamp,
-	      thisArg,
-	      timeoutId,
-	      trailingCall,
-	      lastCalled = 0,
+	      timerId,
+	      lastCallTime,
+	      lastInvokeTime = 0,
 	      leading = false,
-	      maxWait = false,
+	      maxing = false,
 	      trailing = true;
 
 	  if (typeof func != 'function') {
@@ -394,96 +400,102 @@ return /******/ (function(modules) { // webpackBootstrap
 	  wait = toNumber(wait) || 0;
 	  if (isObject(options)) {
 	    leading = !!options.leading;
-	    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
 	    trailing = 'trailing' in options ? !!options.trailing : trailing;
 	  }
 
-	  function cancel() {
-	    if (timeoutId) {
-	      clearTimeout(timeoutId);
-	    }
-	    if (maxTimeoutId) {
-	      clearTimeout(maxTimeoutId);
-	    }
-	    lastCalled = 0;
-	    args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
-	  }
+	  function invokeFunc(time) {
+	    var args = lastArgs,
+	        thisArg = lastThis;
 
-	  function complete(isCalled, id) {
-	    if (id) {
-	      clearTimeout(id);
-	    }
-	    maxTimeoutId = timeoutId = trailingCall = undefined;
-	    if (isCalled) {
-	      lastCalled = now();
-	      result = func.apply(thisArg, args);
-	      if (!timeoutId && !maxTimeoutId) {
-	        args = thisArg = undefined;
-	      }
-	    }
-	  }
-
-	  function delayed() {
-	    var remaining = wait - (now() - stamp);
-	    if (remaining <= 0 || remaining > wait) {
-	      complete(trailingCall, maxTimeoutId);
-	    } else {
-	      timeoutId = setTimeout(delayed, remaining);
-	    }
-	  }
-
-	  function flush() {
-	    if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
-	      result = func.apply(thisArg, args);
-	    }
-	    cancel();
+	    lastArgs = lastThis = undefined;
+	    lastInvokeTime = time;
+	    result = func.apply(thisArg, args);
 	    return result;
 	  }
 
-	  function maxDelayed() {
-	    complete(trailing, timeoutId);
+	  function leadingEdge(time) {
+	    // Reset any `maxWait` timer.
+	    lastInvokeTime = time;
+	    // Start the timer for the trailing edge.
+	    timerId = setTimeout(timerExpired, wait);
+	    // Invoke the leading edge.
+	    return leading ? invokeFunc(time) : result;
+	  }
+
+	  function remainingWait(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime,
+	        result = wait - timeSinceLastCall;
+
+	    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+	  }
+
+	  function shouldInvoke(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime;
+
+	    // Either this is the first call, activity has stopped and we're at the
+	    // trailing edge, the system time has gone backwards and we're treating
+	    // it as the trailing edge, or we've hit the `maxWait` limit.
+	    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+	  }
+
+	  function timerExpired() {
+	    var time = now();
+	    if (shouldInvoke(time)) {
+	      return trailingEdge(time);
+	    }
+	    // Restart the timer.
+	    timerId = setTimeout(timerExpired, remainingWait(time));
+	  }
+
+	  function trailingEdge(time) {
+	    timerId = undefined;
+
+	    // Only invoke if we have `lastArgs` which means `func` has been
+	    // debounced at least once.
+	    if (trailing && lastArgs) {
+	      return invokeFunc(time);
+	    }
+	    lastArgs = lastThis = undefined;
+	    return result;
+	  }
+
+	  function cancel() {
+	    if (timerId !== undefined) {
+	      clearTimeout(timerId);
+	    }
+	    lastInvokeTime = 0;
+	    lastArgs = lastCallTime = lastThis = timerId = undefined;
+	  }
+
+	  function flush() {
+	    return timerId === undefined ? result : trailingEdge(now());
 	  }
 
 	  function debounced() {
-	    args = arguments;
-	    stamp = now();
-	    thisArg = this;
-	    trailingCall = trailing && (timeoutId || !leading);
+	    var time = now(),
+	        isInvoking = shouldInvoke(time);
 
-	    if (maxWait === false) {
-	      var leadingCall = leading && !timeoutId;
-	    } else {
-	      if (!lastCalled && !maxTimeoutId && !leading) {
-	        lastCalled = stamp;
+	    lastArgs = arguments;
+	    lastThis = this;
+	    lastCallTime = time;
+
+	    if (isInvoking) {
+	      if (timerId === undefined) {
+	        return leadingEdge(lastCallTime);
 	      }
-	      var remaining = maxWait - (stamp - lastCalled);
-
-	      var isCalled = (remaining <= 0 || remaining > maxWait) &&
-	        (leading || maxTimeoutId);
-
-	      if (isCalled) {
-	        if (maxTimeoutId) {
-	          maxTimeoutId = clearTimeout(maxTimeoutId);
-	        }
-	        lastCalled = stamp;
-	        result = func.apply(thisArg, args);
-	      }
-	      else if (!maxTimeoutId) {
-	        maxTimeoutId = setTimeout(maxDelayed, remaining);
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
 	      }
 	    }
-	    if (isCalled && timeoutId) {
-	      timeoutId = clearTimeout(timeoutId);
-	    }
-	    else if (!timeoutId && wait !== maxWait) {
-	      timeoutId = setTimeout(delayed, wait);
-	    }
-	    if (leadingCall) {
-	      isCalled = true;
-	      result = func.apply(thisArg, args);
-	    }
-	    if (isCalled && !timeoutId && !maxTimeoutId) {
-	      args = thisArg = undefined;
+	    if (timerId === undefined) {
+	      timerId = setTimeout(timerExpired, wait);
 	    }
 	    return result;
 	  }
@@ -495,16 +507,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = debounce;
 
 
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
 
 	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
 	 *
 	 * @static
 	 * @memberOf _
+	 * @since 0.1.0
 	 * @category Lang
 	 * @param {*} value The value to check.
 	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
@@ -524,15 +538,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function isObject(value) {
 	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
+	  return value != null && (type == 'object' || type == 'function');
 	}
 
 	module.exports = isObject;
 
 
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(6);
 
 	/**
 	 * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -540,7 +556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @static
 	 * @memberOf _
-	 * @type {Function}
+	 * @since 2.4.0
 	 * @category Date
 	 * @returns {number} Returns the timestamp.
 	 * @example
@@ -548,19 +564,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * _.defer(function(stamp) {
 	 *   console.log(_.now() - stamp);
 	 * }, _.now());
-	 * // => logs the number of milliseconds it took for the deferred function to be invoked
+	 * // => Logs the number of milliseconds it took for the deferred invocation.
 	 */
-	var now = Date.now;
+	var now = function() {
+	  return root.Date.now();
+	};
 
 	module.exports = now;
 
 
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(6),
-	    isObject = __webpack_require__(3);
+	var freeGlobal = __webpack_require__(7);
+
+	/** Detect free variable `self`. */
+	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+	/** Used as a reference to the global object. */
+	var root = freeGlobal || freeSelf || Function('return this')();
+
+	module.exports = root;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+	var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+	module.exports = freeGlobal;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(4),
+	    isSymbol = __webpack_require__(9);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -585,13 +629,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @static
 	 * @memberOf _
+	 * @since 4.0.0
 	 * @category Lang
 	 * @param {*} value The value to process.
 	 * @returns {number} Returns the number.
 	 * @example
 	 *
-	 * _.toNumber(3);
-	 * // => 3
+	 * _.toNumber(3.2);
+	 * // => 3.2
 	 *
 	 * _.toNumber(Number.MIN_VALUE);
 	 * // => 5e-324
@@ -599,12 +644,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * _.toNumber(Infinity);
 	 * // => Infinity
 	 *
-	 * _.toNumber('3');
-	 * // => 3
+	 * _.toNumber('3.2');
+	 * // => 3.2
 	 */
 	function toNumber(value) {
+	  if (typeof value == 'number') {
+	    return value;
+	  }
+	  if (isSymbol(value)) {
+	    return NAN;
+	  }
 	  if (isObject(value)) {
-	    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
 	    value = isObject(other) ? (other + '') : other;
 	  }
 	  if (typeof value != 'string') {
@@ -620,59 +671,209 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = toNumber;
 
 
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(3);
+	var baseGetTag = __webpack_require__(10),
+	    isObjectLike = __webpack_require__(14);
 
 	/** `Object#toString` result references. */
-	var funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]';
+	var symbolTag = '[object Symbol]';
+
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+	}
+
+	module.exports = isSymbol;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(11),
+	    getRawTag = __webpack_require__(12),
+	    objectToString = __webpack_require__(13);
+
+	/** `Object#toString` result references. */
+	var nullTag = '[object Null]',
+	    undefinedTag = '[object Undefined]';
+
+	/** Built-in value references. */
+	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+	/**
+	 * The base implementation of `getTag` without fallbacks for buggy environments.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the `toStringTag`.
+	 */
+	function baseGetTag(value) {
+	  if (value == null) {
+	    return value === undefined ? undefinedTag : nullTag;
+	  }
+	  return (symToStringTag && symToStringTag in Object(value))
+	    ? getRawTag(value)
+	    : objectToString(value);
+	}
+
+	module.exports = baseGetTag;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(6);
+
+	/** Built-in value references. */
+	var Symbol = root.Symbol;
+
+	module.exports = Symbol;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(11);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var nativeObjectToString = objectProto.toString;
+
+	/** Built-in value references. */
+	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+	/**
+	 * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the raw `toStringTag`.
+	 */
+	function getRawTag(value) {
+	  var isOwn = hasOwnProperty.call(value, symToStringTag),
+	      tag = value[symToStringTag];
+
+	  try {
+	    value[symToStringTag] = undefined;
+	    var unmasked = true;
+	  } catch (e) {}
+
+	  var result = nativeObjectToString.call(value);
+	  if (unmasked) {
+	    if (isOwn) {
+	      value[symToStringTag] = tag;
+	    } else {
+	      delete value[symToStringTag];
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = getRawTag;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
 
 	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
 	 * of values.
 	 */
-	var objectToString = objectProto.toString;
+	var nativeObjectToString = objectProto.toString;
 
 	/**
-	 * Checks if `value` is classified as a `Function` object.
+	 * Converts `value` to a string using `Object.prototype.toString`.
+	 *
+	 * @private
+	 * @param {*} value The value to convert.
+	 * @returns {string} Returns the converted string.
+	 */
+	function objectToString(value) {
+	  return nativeObjectToString.call(value);
+	}
+
+	module.exports = objectToString;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
 	 *
 	 * @static
 	 * @memberOf _
+	 * @since 4.0.0
 	 * @category Lang
 	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
 	 * @example
 	 *
-	 * _.isFunction(_);
+	 * _.isObjectLike({});
 	 * // => true
 	 *
-	 * _.isFunction(/abc/);
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
 	 * // => false
 	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8 which returns 'object' for typed array constructors, and
-	  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-	  var tag = isObject(value) ? objectToString.call(value) : '';
-	  return tag == funcTag || tag == genTag;
+	function isObjectLike(value) {
+	  return value != null && typeof value == 'object';
 	}
 
-	module.exports = isFunction;
+	module.exports = isObjectLike;
 
 
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
 
-	module.exports={"v":3,"t":[{"t":4,"f":[{"t":7,"e":"textarea","a":{"class":["ractive-autosize-input ",{"t":2,"r":".class"}],"type":[{"t":2,"r":".type"}],"placeholder":[{"t":2,"r":".placeholder"}],"value":[{"t":2,"r":"._value"}],"name":[{"t":2,"r":".name"}],"minlength":[{"t":2,"r":".minlength"}],"maxlength":[{"t":2,"r":".maxlength"}],"required":[{"t":2,"r":".required"}],"readonly":[{"t":2,"r":".readonly"}],"disabled":[{"t":2,"r":".disabled"}],"autofocus":[{"t":2,"r":".autofocus"}],"style":[{"t":2,"r":".style"}]},"v":{"keydown":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keypress":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keyup":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"input":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"focus":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"blur":{"m":"forward","a":{"r":["event"],"s":"[_0]"}}}}],"n":50,"r":"isMultiline"},{"t":4,"n":51,"f":[{"t":7,"e":"input","a":{"class":["ractive-autosize-input ",{"t":2,"r":".class"}],"type":[{"t":2,"r":".type"}],"placeholder":[{"t":2,"r":".placeholder"}],"value":[{"t":2,"r":"._value"}],"name":[{"t":2,"r":".name"}],"minlength":[{"t":2,"r":".minlength"}],"maxlength":[{"t":2,"r":".maxlength"}],"required":[{"t":2,"r":".required"}],"readonly":[{"t":2,"r":".readonly"}],"disabled":[{"t":2,"r":".disabled"}],"autofocus":[{"t":2,"r":".autofocus"}],"style":[{"t":2,"r":".style"}]},"v":{"keydown":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keypress":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"keyup":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"input":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"focus":{"m":"forward","a":{"r":["event"],"s":"[_0]"}},"blur":{"m":"forward","a":{"r":["event"],"s":"[_0]"}}}}],"r":"isMultiline"}]};
+	module.exports={"v":4,"t":[{"t":4,"f":[{"t":7,"e":"textarea","m":[{"n":"class","f":["ractive-autosize-input ",{"t":2,"r":".class"}],"t":13},{"n":"type","f":[{"t":2,"r":".type"}],"t":13},{"n":"placeholder","f":[{"t":2,"r":".placeholder"}],"t":13},{"n":"value","f":[{"t":2,"r":"._value"}],"t":13},{"n":"name","f":[{"t":2,"r":".name"}],"t":13},{"n":"minlength","f":[{"t":2,"r":".minlength"}],"t":13},{"n":"maxlength","f":[{"t":2,"r":".maxlength"}],"t":13},{"n":"required","f":[{"t":2,"r":".required"}],"t":13},{"n":"readonly","f":[{"t":2,"r":".readonly"}],"t":13},{"n":"disabled","f":[{"t":2,"r":".disabled"}],"t":13},{"n":"autofocus","f":[{"t":2,"r":".autofocus"}],"t":13},{"n":["keydown"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["keypress"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["keyup"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["input"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["focus"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["blur"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":"style","f":[{"t":2,"r":".style"}],"t":13}]}],"n":50,"r":"isMultiline"},{"t":4,"n":51,"f":[{"t":7,"e":"input","m":[{"n":"class","f":["ractive-autosize-input ",{"t":2,"r":".class"}],"t":13},{"n":"type","f":[{"t":2,"r":".type"}],"t":13},{"n":"placeholder","f":[{"t":2,"r":".placeholder"}],"t":13},{"n":"value","f":[{"t":2,"r":"._value"}],"t":13},{"n":"name","f":[{"t":2,"r":".name"}],"t":13},{"n":"minlength","f":[{"t":2,"r":".minlength"}],"t":13},{"n":"maxlength","f":[{"t":2,"r":".maxlength"}],"t":13},{"n":"required","f":[{"t":2,"r":".required"}],"t":13},{"n":"readonly","f":[{"t":2,"r":".readonly"}],"t":13},{"n":"disabled","f":[{"t":2,"r":".disabled"}],"t":13},{"n":"autofocus","f":[{"t":2,"r":".autofocus"}],"t":13},{"n":["keydown"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["keypress"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["keyup"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["input"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["focus"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":["blur"],"t":70,"f":{"r":["forward","@event"],"s":"[_0(_1)]"}},{"n":"style","f":[{"t":2,"r":".style"}],"t":13}]}],"l":1}],"e":{}};
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
