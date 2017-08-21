@@ -12,12 +12,12 @@
           readonly='{{.readonly}}'
           disabled='{{.disabled}}'
           autofocus='{{.autofocus}}'
-          on-keydown='forward(event)'
-          on-keypress='forward(event)'
-          on-keyup='forward(event)'
-          on-input='forward(event)'
-          on-focus='forward(event)'
-          on-blur='forward(event)'
+          on-keydown='forward(@event)'
+          on-keypress='forward(@event)'
+          on-keyup='forward(@event)'
+          on-input='forward(@event)'
+          on-focus='forward(@event)'
+          on-blur='forward(@event)'
           style='{{.style}}'/>
 
 {{else}}
@@ -33,12 +33,12 @@
        readonly='{{.readonly}}'
        disabled='{{.disabled}}'
        autofocus='{{.autofocus}}'
-       on-keydown='forward(event)'
-       on-keypress='forward(event)'
-       on-keyup='forward(event)'
-       on-input='forward(event)'
-       on-focus='forward(event)'
-       on-blur='forward(event)'
+       on-keydown='forward(@event)'
+       on-keypress='forward(@event)'
+       on-keyup='forward(@event)'
+       on-input='forward(@event)'
+       on-focus='forward(@event)'
+       on-blur='forward(@event)'
        style='{{.style}}'/>
 
 {{/if}}

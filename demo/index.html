@@ -3,11 +3,11 @@
     <head>
         <title>ractive-autosize-input Demo</title>
 
-        <script src='http://cdn.ractivejs.org/latest/ractive.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/ractive'></script>
 
         <!-- when yo ass has no interwebz -->
         <!--<script src='../node_modules/ractive/ractive.js'></script>-->
-        
+
         <style>
 
             body {
@@ -88,7 +88,7 @@
                 }
 
             }
-            
+
 
         </style>
 
@@ -210,29 +210,29 @@
                 },
 
                 oninit:function() {
-                    this.on('test', this.test.bind(this));
+                    //this.on('test', this.test.bind(this));
                 },
 
-                test: function(e) {
-                    if(e.type === undefined) {
-                        // ractive does weird stuff with on-change, passes an object like {value: '...'} instead of the event
-                        console.log('change');
-                        return;
-                    }
-                    console.log('test: ', e.type, arguments);
+                on: {
+                    test: function(context, e) {
 
-                    var events = this.get('events');
+                        console.log('test: ', e.type, arguments);
 
-                    events.push(e.type);
+                        var events = this.get('events');
 
-                    if(events.length > 10)
-                        events.shift();
+                        events.push(e.type);
 
-                    this.set('events', events);
+                        if(events.length > 10)
+                            events.shift();
 
-                    var pre = this.find('pre.events');
-                    if(pre)
-                        pre.scroll(0, pre.scrollHeight);
+                        this.set('events', events);
+
+                        var pre = this.find('pre.events');
+                        if(pre)
+                            pre.scroll(0, pre.scrollHeight);
+
+                        return true;
+                    },
                 },
 
                 components: {
@@ -241,9 +241,9 @@
                 },
 
             })
-        
+
         </script>
-    
+
     </body>
 
 </html>

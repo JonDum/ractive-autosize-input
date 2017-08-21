@@ -1,15 +1,7 @@
 
 var win = window, doc = win.document;
 
-/*
- *  There's some super weird fucking bug when
- *  a component requires Ractive from a node_module
- *  and then uses an observer inside a lifecycle hook...
- *  sooo yea until I can wrap my head around that bullshit
- *  you need to have Ractive as a global
- *
- */
-//var Ractive = require('ractive');
+var Ractive = require('ractive');
 
 // Share a single sizing element for all of the
 // instances on the page
@@ -30,7 +22,7 @@ var styles = [
 
 var RactiveAutosizeInput = Ractive.extend({
 
-    template: require('!ractive!./template'),
+    template: require('!ractive-loader!./template'),
 
     computed: {
         isMultiline: function() {
@@ -43,7 +35,7 @@ var RactiveAutosizeInput = Ractive.extend({
 
             // if not, automatically check for newline chars
             return /\n/.test(this.get('_value'));
-        }, 
+        },
         _value: {
             get: function() {
                 var value = this.get('value');
@@ -83,7 +75,7 @@ var RactiveAutosizeInput = Ractive.extend({
                 if(newStyles[style] !== oldStyles[style]) {
                     dirty = true;
                 }
-                // copy over style now that we've checked, cloning whole object doesn't work 
+                // copy over style now that we've checked, cloning whole object doesn't work
                 //oldStyles.setProperty(style, newStyles[style]);
             }
 
@@ -160,8 +152,7 @@ var RactiveAutosizeInput = Ractive.extend({
         window.removeEventListener('resize', self.resizeListener);
     },
 
-    forward: function(details) {
-        var event = details.original;
+    forward: function(event, context) {
         if(event && event.type)
             this.fire(event.type, event);
     }
